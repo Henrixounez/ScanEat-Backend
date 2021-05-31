@@ -1,6 +1,7 @@
-import { Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Category } from "./Category";
 import { DishReview } from "./DishReview";
-import { Order } from "./Order";
+import { OrderDish } from "./OrderDish";
 import { Restaurant } from "./Restaurant";
 
 @Entity()
@@ -17,14 +18,17 @@ export class Dish {
   @Column({ nullable: true })
   image: string;
 
-  @Column()
+  @Column({ type: "float4" })
   price: number;
 
   @ManyToOne(() => Restaurant, relation => relation.dishes)
   restaurant: Restaurant;
 
-  @ManyToMany(() => Order, relation => relation.dishes)
-  orders: Order[];  
+  @ManyToOne(() => Category, relation => relation.dishes)
+  category: Category;
+
+  @OneToMany(() => OrderDish, relation => relation.dish)
+  orders: OrderDish[];  
 
   @OneToMany(() => DishReview, relation => relation.dish)
   dishReviews: DishReview[];

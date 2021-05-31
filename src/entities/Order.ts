@@ -1,5 +1,5 @@
-import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { Dish } from "./Dish";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { OrderDish } from "./OrderDish";
 import { Restaurant } from "./Restaurant";
 import { User } from "./User";
 
@@ -7,7 +7,7 @@ export enum OrderStatus {
   WAITING = "waiting",
   CONFIRMED = "confirmed",
   REFUSED = "refused",
-  PAID = "paid",
+  FINISHED = "finished",
 }
 
 @Entity()
@@ -18,9 +18,14 @@ export class Order {
   @Column({ default: OrderStatus.WAITING })
   status: OrderStatus;
 
-  @ManyToMany(() => Dish, relation => relation.orders)
-  @JoinTable()
-  dishes: Dish[];
+  @Column({ default: false })
+  paid: boolean;
+
+  @Column({ default: 0 })
+  table: number;
+
+  @OneToMany(() => OrderDish, relation => relation.order)
+  dishes: OrderDish[];
 
   @ManyToOne(() => User, relation => relation.orders)
   user: User;
@@ -28,7 +33,7 @@ export class Order {
   @ManyToOne(() => Restaurant, relation => relation.orders)
   restaurant: Restaurant;
 
-  @Column({ default: 0 })
+  @Column({ default: 0, type: "float4" })
   price: number;
 
   @CreateDateColumn()

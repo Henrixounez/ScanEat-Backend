@@ -1,3 +1,4 @@
+import Category from './Category';
 import Dish from './Dish';
 import DishReview from './DishReview';
 import Order from './Order';
@@ -6,6 +7,7 @@ import { RoutesType, RoutesTypeWS } from './types';
 import User from './User';
 
 const modules = [
+  Category,
   Dish,
   DishReview,
   Order,

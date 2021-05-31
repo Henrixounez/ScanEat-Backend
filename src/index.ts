@@ -52,7 +52,7 @@ createConnection({
   //     "rejectUnauthorized": false
   //   }
   // },
-  "entities": [process.env.NODE_ENV === "development" ? "./src/entities/**/*" : "./build/entities/**/*"]
+  "entities": [`${__dirname}/entities/**/*`]
 }).then(() => {
   app.listen(process.env.PORT || 8080, () => {
     setInterval(() => {

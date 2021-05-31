@@ -1,4 +1,4 @@
-import { BeforeInsert, Column, CreateDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BeforeInsert, Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import * as bcrypt from 'bcrypt';
 import * as jwt from "jsonwebtoken";
 import { Order } from "./Order";
@@ -20,10 +20,10 @@ export class User {
   email: string;
 
   @Column()
-  firstname: string;
+  firstname?: string;
 
   @Column()
-  lastname: string;
+  lastname?: string;
 
   @Column({ select: false })
   password: string;
@@ -38,6 +38,7 @@ export class User {
   dishReviews: DishReview[];
 
   @OneToOne(() => Restaurant, relation => relation.owner)
+  @JoinColumn()
   restaurant: Restaurant;
 
   @CreateDateColumn()
@@ -64,6 +65,6 @@ export class User {
     )
   }
   getName(): string {
-    return `${this.firstname} ${this.lastname[0]}.`;
+    return `${this.firstname} ${this.lastname?.[0] || ""}.`;
   }
 }

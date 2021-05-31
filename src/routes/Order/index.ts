@@ -1,7 +1,7 @@
 import { UserType } from '../../entities/User';
 import { checkLogin, checkRole } from '../auth';
 import { RoutesType, Method, RoutesTypeWS } from '../types';
-import { getByToken, getById, getUserOrders, create, pay } from './controller';
+import { getByToken, getById, getUserOrders, create, pay, update } from './controller';
 
 const crud: RoutesType[] = [
   {
@@ -23,7 +23,7 @@ const crud: RoutesType[] = [
   {
     // Get all User orders
     method: Method.GET,
-    route: "/orders",
+    route: "/orders/user/:id",
     controller: getUserOrders,
     middlewares: [
       checkLogin(),
@@ -44,6 +44,16 @@ const crud: RoutesType[] = [
     method: Method.PATCH,
     route: "/order/pay",
     controller: pay,
+  },
+  {
+    // Update an Order for restaurant owners
+    method: Method.PATCH,
+    route: "/order/:id",
+    controller: update,
+    middlewares: [
+      checkLogin(),
+      checkRole([UserType.PRO, UserType.ADMIN])
+    ]
   }
 ];
 

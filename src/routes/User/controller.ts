@@ -15,7 +15,7 @@ interface LoginReturn extends UserReturn {
 
 // POST
 // Login user
-export async function login(req: Request, res: Response<LoginReturn>): Promise<void> {
+export async function login(req: Request, res: Response<LoginReturn | string>): Promise<void> {
   const { email, password } = req.body;
   const userRepository = getRepository(User);
 
@@ -26,26 +26,26 @@ export async function login(req: Request, res: Response<LoginReturn>): Promise<v
       .addSelect("user.password")
       .getOneOrFail();
     if (!user.checkPassword(password)) {
-      res.sendStatus(StatusCodes.UNAUTHORIZED);
+      res.status(StatusCodes.UNAUTHORIZED).send('Invalid Email or Password');
       return;
     }
     const token = user.getJWTToken();
     res.setHeader('authorization', token);
     res.status(StatusCodes.OK).json({
       token,
-      firstname: user.firstname,
-      lastname: user.lastname,
+      firstname: user.firstname || "",
+      lastname: user.lastname || "",
       email,
       type: user.type,
     });
   } catch (e) {
-    res.sendStatus(StatusCodes.NOT_FOUND);
+    res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
   }
 }
 
 // POST
 // Register user
-export async function register(req: Request, res: Response<LoginReturn>): Promise<void> {
+export async function register(req: Request, res: Response<LoginReturn | string>): Promise<void> {
   const { email, password, firstname, lastname, type } = req.body;
   const userRepository = getRepository(User);
 
@@ -69,7 +69,32 @@ export async function register(req: Request, res: Response<LoginReturn>): Promis
       type,
     });
   } catch (e) {
-    res.sendStatus(StatusCodes.CONFLICT);
+    if (e.routine === "_bt_check_unique")
+      res.status(StatusCodes.CONFLICT).send('Email is already taken');
+    else
+      res.sendStatus(StatusCodes.CONFLICT);
+  }
+}
+
+// GET
+// Get asking user
+export async function get(req: Request, res: Response<LoginReturn>): Promise<void> {
+  const id = res.locals.jwtPayload.userId;
+  const userRepository = getRepository(User);
+
+  try {
+    const user = await userRepository.findOneOrFail(id);
+    const token = user.getJWTToken();
+    res.setHeader('authorization', token);
+    res.status(StatusCodes.OK).json({
+      token,
+      firstname: user.firstname || "",
+      lastname: user.lastname || "",
+      email: user.email,
+      type: user.type,
+    });
+  } catch (e) {
+    res.sendStatus(StatusCodes.NOT_FOUND);
   }
 }
 

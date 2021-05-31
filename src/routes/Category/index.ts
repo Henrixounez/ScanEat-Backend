@@ -1,19 +1,19 @@
 import { UserType } from '../../entities/User';
 import { checkLogin, checkRole } from '../auth';
 import { RoutesType, Method, RoutesTypeWS } from '../types';
-import { create, del, get, update } from './controller';
+import { create, get, update, del } from './controller';
 
 const crud: RoutesType[] = [
   {
-    // Get all dishes from restaurant (:id)
+    // Get all categories from restaurant (:id)
     method: Method.GET,
-    route: "/dishes/:id",
+    route: "/categories/:id",
     controller: get,
   },
   {
-    // Create a dish
+    // Create a category
     method: Method.POST,
-    route: "/dish",
+    route: "/category",
     controller: create,
     middlewares: [
       checkLogin(),
@@ -24,9 +24,9 @@ const crud: RoutesType[] = [
     ]
   },
   {
-    // Update a dish
+    // Update a category
     method: Method.PUT,
-    route: "/dish/:id",
+    route: "/category/:id",
     controller: update,
     middlewares: [
       checkLogin(),
@@ -37,9 +37,9 @@ const crud: RoutesType[] = [
     ]
   },
   {
-    // Delete a dish
+    // Delete a category
     method: Method.DELETE,
-    route: "/dish/:id",
+    route: "/category/:id",
     controller: del,
     middlewares: [
       checkLogin(),

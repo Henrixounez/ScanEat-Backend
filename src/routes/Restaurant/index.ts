@@ -1,17 +1,26 @@
 import { UserType } from '../../entities/User';
 import { checkLogin, checkRole } from '../auth';
 import { RoutesType, Method, RoutesTypeWS } from '../types';
-import { create, getByCity, getById } from './controller';
+import { create, get, getMyRestaurant, getById, update } from './controller';
 
 const crud: RoutesType[] = [
   {
     // Get all restaurants in a city (by name)
     method: Method.GET,
-    route: "/restaurants/:city",
-    controller: getByCity,
+    route: "/restaurants/",
+    controller: get,
     middlewares: [
-      checkLogin(),
-      checkRole([UserType.CLIENT])
+      checkLogin(true),
+    ]
+  },
+  {
+    // Get user restaurant
+    method: Method.GET,
+    route: "/restaurant/",
+    controller: getMyRestaurant,
+    middlewares: [
+      checkLogin(true),
+      checkRole([UserType.PRO])
     ]
   },
   {
@@ -19,6 +28,18 @@ const crud: RoutesType[] = [
     method: Method.GET,
     route: "/restaurant/:id",
     controller: getById,
+    middlewares: [
+      checkLogin(true),
+    ]
+  },
+  {
+    method: Method.PUT,
+    route: "/restaurant/:id",
+    controller: update,
+    middlewares: [
+      checkLogin(),
+      checkRole([UserType.PRO, UserType.ADMIN])
+    ]
   },
   {
     // Create a restaurant
